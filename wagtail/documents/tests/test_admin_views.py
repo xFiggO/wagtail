@@ -413,6 +413,26 @@ class TestDocumentIndexView(WagtailTestUtils, TestCase):
         for action in bulk_actions:
             self.assertNotIn("next=", action["href"])
 
+    def test_register_document_header_buttons_hook(self):
+        from wagtail import hooks
+        from wagtail.admin.widgets.button import Button
+
+        def document_header_buttons(view):
+            yield Button(
+                "A custom document header button",
+                "/custom-doc-url",
+                priority=10,
+            )
+
+        with hooks.register_temporarily(
+            "register_document_header_buttons", document_header_buttons
+        ):
+            response = self.get()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "A custom document header button")
+        self.assertContains(response, "/custom-doc-url")
+
 
 class TestDocumentIndexViewSearch(WagtailTestUtils, TransactionTestCase):
     def setUp(self):

@@ -64,6 +64,7 @@ class IndexView(generic.IndexView):
     context_object_name = "documents"
     page_title = gettext_lazy("Documents")
     header_icon = "doc-full-inverse"
+    header_buttons_hook_name = "register_document_header_buttons"
     page_kwarg = "p"
     paginate_by = 20
     index_url_name = "wagtaildocs:index"

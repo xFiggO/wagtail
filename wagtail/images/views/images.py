@@ -73,6 +73,7 @@ class IndexView(generic.IndexView):
     filterset_class = ImagesFilterSet
     show_other_searches = True
     header_icon = "image"
+    header_buttons_hook_name = "register_image_header_buttons"
     page_title = gettext_lazy("Images")
     add_item_label = gettext_lazy("Add an image")
     index_url_name = "wagtailimages:index"

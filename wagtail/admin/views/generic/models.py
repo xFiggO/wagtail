@@ -22,6 +22,7 @@ from django.views.generic.edit import (
     BaseUpdateView,
 )
 
+from wagtail import hooks
 from wagtail.actions.unpublish import UnpublishAction
 from wagtail.admin import messages
 from wagtail.admin.filters import WagtailFilterSet
@@ -85,6 +86,7 @@ class IndexView(
     delete_url_name = None
     reorder_url_name = None
     any_permission_required = ["add", "change", "delete", "view"]
+    header_buttons_hook_name = None
     list_filter = None
     show_other_searches = False
     sort_order_field = None
@@ -336,6 +338,25 @@ class IndexView(
                     self.add_item_label,
                     url=self.add_url,
                     icon_name="plus",
+                )
+            )
+        return buttons
+
+    def get_header_buttons(self):
+        buttons = list(self.header_buttons)
+        if self.header_buttons_hook_name:
+            for hook in hooks.get_hooks(self.header_buttons_hook_name):
+                buttons.extend(hook(self))
+        buttons = sorted(buttons)
+
+        more_buttons = self.get_header_more_buttons()
+        if more_buttons:
+            buttons.append(
+                ButtonWithDropdown(
+                    buttons=more_buttons,
+                    icon_name="dots-horizontal",
+                    attrs={"aria-label": _("Actions")},
+                    classname="w-h-slim-header",
                 )
             )
         return buttons
